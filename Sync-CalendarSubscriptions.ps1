@@ -294,7 +294,7 @@ function Show-ConfigMenu {
     switch ($choice.ToUpper()) {
       "1" { Show-GroupMenu    -ConfigPath $ConfigPath }
       "2" { Show-CalendarMenu -ConfigPath $ConfigPath }
-      "Q" { return }
+      "Q" { Clear-Host return }
     }
   }
 }
