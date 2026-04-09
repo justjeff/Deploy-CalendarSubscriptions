@@ -283,7 +283,7 @@ function Show-ConfigMenu {
     $cfg = Read-Config -ConfigPath $ConfigPath
     Write-Header "Main Menu"
 
-    Write-Host "  Groups:     $(@($.cfg.Groups).Count) defined"
+    Write-Host "  Groups:     $(@($cfg.Groups).Count) defined"
     Write-Host "  Calendars:  $(@($cfg.Calendars).Count) defined"
     Write-Host "  Config:     $ConfigPath" -ForegroundColor DarkGray
     Write-Host ""
