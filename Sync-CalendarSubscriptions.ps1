@@ -62,7 +62,7 @@ function Save-Config {
   param([string]$ConfigPath, [array]$Groups, [array]$Calendars)
   $out = [PSCustomObject]@{ Groups = @($Groups); Calendars = @($Calendars) }
   $out | ConvertTo-Json -Depth 10 | Out-File $ConfigPath
-  Write-Host "Saved: $ConfigPath" -ForegroundColor Green
+  Write-Host "`nSaved: $ConfigPath" -ForegroundColor Green
 }
 
 # --- Menu Helpers ---
@@ -88,6 +88,7 @@ function Select-FromList {
   for ($i = 0; $i -lt $Items.Count; $i++) {
     Write-Host "  [$($i + 1)] $(& $DisplayScript $Items[$i])"
   }
+  Write-Host ""
   Write-Host "  [X] Cancel"
   $choice = Read-Host $Prompt
   if ($choice.ToUpper() -eq "X" -or $choice -eq "") { return $null }
@@ -114,7 +115,7 @@ function Show-CalendarMenu {
     }
 
     Write-Host "[1] Add Calendar [2] Delete Calendar [X] Back/Cancel"
-    $choice = Read-Host "Selection"
+    $choice = Read-Host "`nSelection"
 
     switch ($choice.ToUpper()) {
       "1" {
@@ -141,7 +142,7 @@ function Show-CalendarMenu {
           }
           $cfg.Calendars = @($cfg.Calendars | Where-Object { $_.Id -ne $cal.Id })
           Save-Config -ConfigPath $ConfigPath -Groups $cfg.Groups -Calendars $cfg.Calendars
-          Write-Host "Calendar Deleted" -ForegroundColor Green
+          Write-Host "`nCalendar Deleted" -ForegroundColor Green
           Start-Sleep -Seconds 1
         }
       }
@@ -169,7 +170,7 @@ function Show-EditGroupMenu {
     Write-Host ""
 
     Write-Host "[1] Link Calendar [2] Unlink Calendar [3] Delete Group [X] Back/Cancel"
-    $choice = Read-Host "Selection"
+    $choice = Read-Host "`nSelection"
 
     switch ($choice.ToUpper()) {
       "1" {
@@ -186,7 +187,7 @@ function Show-EditGroupMenu {
           $targetGroup.CalendarIds = @($targetGroup.CalendarIds) + $cal.Id
           $Group.CalendarIds = $targetGroup.CalendarIds
           Save-Config -ConfigPath $ConfigPath -Groups $cfg.Groups -Calendars $cfg.Calendars
-          Write-Host "Linked." -ForegroundColor Green
+          Write-Host "`nLinked." -ForegroundColor Green
           Start-Sleep -Seconds 1
         }
       }
@@ -203,7 +204,7 @@ function Show-EditGroupMenu {
           $targetGroup.CalendarIds = @($targetGroup.CalendarIds | Where-Object { $_ -ne $cal.Id })
           $Group.CalendarIds = $targetGroup.CalendarIds
           Save-Config -ConfigPath $ConfigPath -Groups $cfg.Groups -Calendars $cfg.Calendars
-          Write-Host "Unlinked." -ForegroundColor Green
+          Write-Host "`nUnlinked." -ForegroundColor Green
           Start-Sleep -Seconds 1
         }
       }
@@ -212,7 +213,7 @@ function Show-EditGroupMenu {
         if ($confirm.ToUpper() -eq "Y") {
           $cfg.Groups = @($cfg.Groups | Where-Object { $_.Email -ne $Group.Email })
           Save-Config -ConfigPath $ConfigPath -Groups $cfg.Groups -Calendars $cfg.Calendars
-          Write-Host "Group deleted." -ForegroundColor Green
+          Write-Host "`nGroup deleted." -ForegroundColor Green
           Start-Sleep -Seconds 1
           return
         }
@@ -239,7 +240,7 @@ function Show-GroupMenu {
     }
 
     Write-Host "[1] Add Group [2] Edit Group [X] Back/Cancel"
-    $choice = Read-Host "Selection"
+    $choice = Read-Host "`nSelection"
 
     switch ($choice.ToUpper()) {
       "1" {
@@ -288,7 +289,7 @@ function Show-ConfigMenu {
     Write-Host "  Config:     $ConfigPath" -ForegroundColor DarkGray
     Write-Host ""
     Write-Host "[1] Manage Groups [2] Manage Calendars [Q] Quit"
-    $choice = Read-Host "Selection"
+    $choice = Read-Host "`nSelection"
 
     switch ($choice.ToUpper()) {
       "1" { Show-GroupMenu    -ConfigPath $ConfigPath }
