@@ -305,7 +305,11 @@ function Start-Preflight {
   # Verify config is present
   param([string]$ConfigPath)
   if (-not (Test-Path $ConfigPath)) {
-    throw "No config found at $ConfigPath. Run with -Config to set up default."
+    throw "No config found at $ConfigPath. Run with -Config to set up."
+  }
+  # Verify config is not empty
+  if ((Get-Item $ConfigPath).Length -eq 0) {
+    throw "Config file exists but is empty at '$ConfigPath'. Run with -Config to set up."
   }
   # Verify GAM accessibility
   if (-not (Get-Command "gam" -ErrorAction SilentlyContinue)) {
@@ -326,6 +330,15 @@ try {
   Start-Preflight -ConfigPath $ConfigPath
   $cfg = Read-Config -ConfigPath $ConfigPath
   $groups = @($cfg.Groups)
+
+  # Verifying config actually has groups
+  if (@($groups).Count -eq 0) {
+    throw "No groups defined in config. Run with -Config to set up."
+  }
+  # Verifying config actually has calendars
+  if (@($cfg.Calendars).Count -eq 0) {
+    throw "No calendars defined in config. Run with -Config to set up."
+  }
   # $Settings = Get-Content $ConfigPath | ConvertFrom-Json
 
   foreach ($Group in $groups) {
@@ -342,7 +355,7 @@ try {
     gam redirect csv "$tempCsv" print group-members group "$($Group.Email)" recursive types user
 
     # VALIDATE CSV CONTENT: Ensure we have more than just a header row
-    $csvData = Import-Csv $tempCsv -ErrorAction SilentlyContinue
+    $csvData = @(Import-Csv $tempCsv -ErrorAction SilentlyContinue)
     if (-not $csvData) {
         throw "No members found for group $($Group.Label) or group may not exist or has no members."
     }
