@@ -118,7 +118,7 @@ function Show-CalendarMenu {
 
     switch ($choice.ToUpper()) {
       "1" {
-        $id    = Read-Host "Enter Calendar ID"
+        $id    = Read-Host "Enter Calendar ID (e.g. c_xxxx@group.calendar.google.com)"
         $label = Read-Host "Enter Label (e.g. Events)"
         $cfg.Calendars += [PSCustomObject]@{ Id = $id; Label = $label }
         Save-Config -ConfigPath $ConfigPath -Groups $cfg.Groups -Calendars $cfg.Calendars
