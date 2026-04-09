@@ -50,7 +50,6 @@ function Read-Config {
     $groups    = @($data.Groups)
     $calendars = @($data.Calendars)
   } else { # No config? No problem - we create an object
-    # $data = [PSCustomObject]@{ Groups = @(); Calendars = @() }
     $groups    = @()
     $calendars = @()
   }
@@ -67,10 +66,10 @@ function Save-Config {
 
 # --- Menu Helpers ---
 function Write-Header {
-  param([string]$AppTitle)
+  param([string]$Title)
   Clear-Host
   Write-Host ""
-  Write-Host "=== $AppTitle Config ===" -ForegroundColor Cyan
+  Write-Host "=== $AppTitle - $Title ===" -ForegroundColor Cyan
   Write-Host ""
 }
 
@@ -263,7 +262,7 @@ function Show-GroupMenu {
         $cfg = Read-Config -ConfigPath $ConfigPath
       }
       "2" {
-        Write-header "Edit Group"
+        Write-Header "Edit Group"
         $cfg = Read-Config -ConfigPath $ConfigPath
         $group = Select-FromList -Prompt "Select group to edit" -Items $cfg.Groups -DisplayScript { param($g) "$($g.Label) ( $($g.Email) )" }
         if ($group) {
@@ -342,7 +341,6 @@ try {
   if (@($cfg.Calendars).Count -eq 0) {
     throw "No calendars defined in config. Run with -Config to set up."
   }
-  # $Settings = Get-Content $ConfigPath | ConvertFrom-Json
 
   foreach ($Group in $groups) {
     $calendars = @($cfg.Calendars | Where-Object { $Group.CalendarIds -contains $_.Id })
