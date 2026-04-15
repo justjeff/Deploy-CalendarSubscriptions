@@ -9,6 +9,10 @@
   Path to the config.json file. Defaults to config.json in the script directory.
   .PARAMETER StateDir
   Directory for state_group_domain_tld.json files. Defaults to \state in the script directory.
+  .PARAMETER GamConfigDir
+  GAM config directory. Defaults to C:\GAMConfig.
+  .PARAMETER $MaxRetries
+  Set an integer for GAM command retries.
   .PARAMETER AppTitle
   Used in app menu and as the Windows Event Log source name. Defaults to Sync-CalendarSubscriptions
 
