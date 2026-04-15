@@ -9,8 +9,6 @@
   Path to the config.json file. Defaults to config.json in the script directory.
   .PARAMETER StateDir
   Directory for state_group_domain_tld.json files. Defaults to \state in the script directory.
-  .PARAMETER GamConfigDir
-  GAM config directory. Defaults to C:\GAMConfig.
   .PARAMETER $MaxRetries
   Set an integer for GAM command retries.
   .PARAMETER AppTitle
@@ -25,7 +23,6 @@ param (
     [Parameter()]
     [switch]$Config,
     [string]$ConfigPath   = (Join-Path $PSScriptRoot "config.json"),
-    [string]$GamConfigDir = "C:\GAMconfig",
     [string]$StateDir     = (Join-Path $PSScriptRoot "state"),
     [string]$AppTitle     = "Sync-CalendarSubscriptions",
     [int]$maxRetries      = 2 # Zero indexed, so total attempt is $MaxRetries + 1
@@ -434,7 +431,7 @@ function Show-ConfigMenu {
 
 # --- Preflight Checks ---
 function Start-Preflight {
-  param([string]$ConfigPath, [string]$StateDir, [array]$Groups, [array]$Calendars, [string]$GamConfigDir)
+  param([string]$ConfigPath, [string]$StateDir, [array]$Groups, [array]$Calendars)
   # Verify config exists...
   if (-not (Test-Path $ConfigPath)) {
     throw "No config found at '$ConfigPath'. Run with -Config to set up."
@@ -446,10 +443,6 @@ function Start-Preflight {
   # Verify gam is in path...
   if (-not (Get-Command "gam" -ErrorAction SilentlyContinue)) {
     throw "GAM command not found in PATH. Ensure GAM is installed and accessible for the service account."
-  }
-  # Verify gam config directory
-  if (-not (Test-Path $GamConfigDir)) {
-    throw "GAMconfig directory not found at '$GamConfigDir'. Verify GAM is installed and the path is correct."
   }
   # Verify groups are defined (may not have any members!)
   if ($Groups.Count -eq 0) {
@@ -471,10 +464,6 @@ if ($Config) {
   Show-ConfigMenu -ConfigPath $ConfigPath
   exit
 }
-
-# Force GAM Config to use parameter
-$env:GAMCONFIGDIR = $GamConfigDir
-
 
 # Temp data files
 $tempCsv = [System.IO.Path]::GetTempFileName()
